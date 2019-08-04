@@ -112,7 +112,7 @@ class RabbitQueue:
         return len(self.queue)
 
 
-from git_repo.python_course.sug_crawler import sug_config
+from sug_crawler import sug_config
 global_rqueue = RabbitQueue(
     sug_config.RABBIT_HOST, sug_config.RABBIT_PORT, sug_config.RABBIT_VHOST,
     sug_config.RABBIT_USER, sug_config.RABBIT_PASSWORD,
