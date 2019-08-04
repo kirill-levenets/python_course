@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        {% if keyword %}
+            <h3>Suggestions for {{ keyword }}!</h3>
+            <ul>{% for s in suggestions %}
+                    <li>{{ s.keyword }}</li>
+                {% endfor %}
+            </ul>
+            <div style="visible:{{ pagination }}">
+                {% if pagination %}
+                    <a href="/?q=keyword&page=1">next {{ 0 }}</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <h3>Input some phrase to see result</h3>
+        {% endif %}
+{% endblock %}
