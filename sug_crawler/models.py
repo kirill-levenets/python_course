@@ -4,7 +4,7 @@
 from init_app import db
 
 
-class Keyword(db.Model):
+class Keywords(db.Model):
     '''
     # insert sample data with ignore
     stmt = Keyword.__table__.insert().prefix_with('OR IGNORE').values([
@@ -13,7 +13,7 @@ class Keyword(db.Model):
     db.session.execute(stmt)
     db.session.commit()
     '''
-    id = db.Column('sug_id', db.Integer, primary_key=True)
+    id = db.Column('keyword_id', db.Integer, primary_key=True)
     keyword = db.Column(db.String(100), unique=True, nullable=False)
 
     def __init__(self, keyword):

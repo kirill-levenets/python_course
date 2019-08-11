@@ -3,14 +3,15 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sug_config import DB_NAME, RANDOM_STRING, APP_NAME
 
 db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/keywords.sqlite3'
-    app.config['SECRET_KEY'] = "random string"
+    app = Flask(APP_NAME)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(DB_NAME)
+    app.config['SECRET_KEY'] = RANDOM_STRING
     db.init_app(app)
 
     with app.app_context():

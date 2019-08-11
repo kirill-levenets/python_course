@@ -2,8 +2,11 @@
 import heapq
 import os
 import time
+import logging
+from multiprocessing import current_process
 
-PROXY_FILE_PATH = os.path.join(os.getcwd(), '..', 'db', 'proxy_list.txt')
+from sug_config import PROXY_FILE_PATH
+
 
 
 class Proxy:
@@ -27,12 +30,13 @@ class ProxyManager:
     def __init__(self, ok_timeout=1, ban_timeout=10):
         self.proxies = self.read_file()
         self.ok_proxies = [Proxy(ip, port) for ip, port in self.proxies]
+        self.log = logging.getLogger(current_process().name)
         heapq.heapify(self.ok_proxies)
         self.ban_proxies = []
         heapq.heapify(self.ban_proxies)
         self.ban_timeout = ban_timeout
         self.ok_timeout = ok_timeout
-        print(f'{self.ok_proxies}\n{self.ban_proxies}')
+        self.log.debug(f'{self.ok_proxies}\n{self.ban_proxies}')
 
 
     def read_file(self):
@@ -51,7 +55,7 @@ class ProxyManager:
             new_proxy = heapq.heappop(self.ban_proxies)
             can_use_time = new_proxy.can_use_time
         else:
-            print('ok and ban are empty!')
+            self.log.debug('ok and ban are empty!')
 
         if can_use_time < cur_time:
             return new_proxy
@@ -61,7 +65,7 @@ class ProxyManager:
     def back_proxy(self, proxy: Proxy, response: str):
         proxy.counter += 1
         proxy.status = response
-        print(f'back: {proxy}')
+        self.log.debug(f'back: {proxy}')
         if response == 'ok':
             proxy.can_use_time = time.time() + self.ok_timeout
             heapq.heappush(self.ok_proxies, proxy)

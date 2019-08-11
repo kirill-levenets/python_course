@@ -3,10 +3,10 @@
 {% block content %}
         {% if keyword %}
             <h3>Suggestions for {{ keyword }}!</h3>
-            <ul>{% for s in suggestions %}
+            <ol>{% for s in suggestions %}
                     <li>{{ s.keyword }}</li>
                 {% endfor %}
-            </ul>
+            </ol>
             <div style="visible:{{ pagination }}">
                 {% if pagination %}
                     <a href="/?q=keyword&page=1">next {{ 0 }}</a>
