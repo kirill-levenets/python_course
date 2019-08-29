@@ -1,5 +1,3 @@
-# init_app.py
-
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -10,7 +8,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(APP_NAME)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(DB_NAME)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DB_NAME
     app.config['SECRET_KEY'] = RANDOM_STRING
     db.init_app(app)
 

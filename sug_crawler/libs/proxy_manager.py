@@ -25,6 +25,9 @@ class Proxy:
             self.ip, self.port, self.counter, self.can_use_time, self.status
         )
 
+    def __str__(self):
+        return '{}:{}'.format(self.ip, self.port)
+
 
 class ProxyManager:
     def __init__(self, ok_timeout=1, ban_timeout=10):
@@ -37,7 +40,6 @@ class ProxyManager:
         self.ban_timeout = ban_timeout
         self.ok_timeout = ok_timeout
         self.log.debug(f'{self.ok_proxies}\n{self.ban_proxies}')
-
 
     def read_file(self):
         with open(PROXY_FILE_PATH, 'r') as f:
@@ -72,7 +74,7 @@ class ProxyManager:
         else:
             proxy.can_use_time = time.time() + self.ban_timeout
             heapq.heappush(self.ban_proxies, proxy)
-        print(f'{self.ok_proxies}\n{self.ban_proxies}')
+            # self.log.debug(f'{self.ok_proxies}\n{self.ban_proxies}')
 
     def proxy_generator(self):
         while True:

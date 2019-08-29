@@ -1,31 +1,11 @@
 
-
-# import logging
-# import sys
-#
-# # Создать регистратор верхнего уровня с именем ‘app’
-# app_log = logging.getLogger("app")
-# app_log.setLevel(logging.INFO)
-# app_log.propagate = False
-#
-# # Добавить несколько обработчиков в регистратор ‘app’
-# app_log.addHandler(logging.FileHandler('app.log'))
-# app_log.addHandler(logging.StreamHandler(sys.stderr))
-# # app_log.addHandler(logging.StreamHandler(sys.stdout))
-#
-# # Отправить несколько сообщений. Они попадут в файл app.log
-# # и будут выведены в поток sys.stderr
-# app_log.critical("Creeping death detected!")
-# app_log.info("FYI")
-#
-# exit()
-
-
 # main.py
 
 import logging
 import sys
+
 from init_app import create_app
+from sug_config import FLASK_HOST, FLASK_PORT
 
 app = create_app()
 
@@ -36,7 +16,7 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
 
     log_formatter = logging.Formatter(
-        '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} '
+        '[%(asctime)s] p%(process)s {%(filename)s:%(lineno)d} '
         '%(levelname)s - %(message)s'
     )
 
@@ -52,4 +32,4 @@ if __name__ == "__main__":
 
     app.logger.info('start flask!')
 
-    app.run(debug=True)
+    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=False)

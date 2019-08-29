@@ -1,0 +1,10 @@
+asyncpg
+gunicorn
+python-dotenv
+rabbitpy
+flask
+flask-sqlalchemy
+aiosqlite
+aiohttp
+aiosocksy
+psycopg2

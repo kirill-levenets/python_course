@@ -21,9 +21,11 @@
         <main role="main" class="container">
             <p>
                 <form class="form form-inline" method="POST"  action="/">
-                    <input class="form-control"
-                           name="keyword" type="search"
-                           placeholder="Search" aria-label="Search">
+                    {% if keyword %}
+                        <input class="form-control" name="keyword" type="search" value="{{ keyword }}" aria-label="Search">
+                    {% else %}
+                        <input class="form-control" name="keyword" type="search" placeholder="Search" aria-label="Search">
+                    {% endif %}
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </p>

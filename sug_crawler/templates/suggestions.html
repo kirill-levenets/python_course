@@ -2,7 +2,7 @@
 
 {% block content %}
         {% if keyword %}
-            <h3>Suggestions for {{ keyword }}!</h3>
+            <h3>Suggestions for {{ keyword }} [{{ results_count }}]!</h3>
             <ol>{% for s in suggestions %}
                     <li>{{ s.keyword }}</li>
                 {% endfor %}

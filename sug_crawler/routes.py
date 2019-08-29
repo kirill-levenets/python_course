@@ -12,6 +12,7 @@ from sug_config import ALPHABETS
 def add_suffixes(keyword):
     for char in ALPHABETS:
         yield '{} {}'.format(keyword, char)
+        yield '{} {}'.format(char, keyword)
 
 
 @app.route('/', methods=["POST", "GET"])
@@ -47,5 +48,6 @@ def suggestions():
     return render_template('suggestions.html',
                            keyword=search_for,
                            suggestions=suggestions,
+                           results_count=len(suggestions),
                            pagination=False)
 

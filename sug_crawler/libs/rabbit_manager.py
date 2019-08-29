@@ -5,7 +5,8 @@ import logging
 from multiprocessing import current_process
 
 from sug_config import (RABBIT_HOST, RABBIT_PORT, RABBIT_VHOST,
-RABBIT_USER, RABBIT_PASSWORD, EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY)
+                        RABBIT_USER, RABBIT_PASSWORD, EXCHANGE_NAME,
+                        QUEUE_NAME, ROUTING_KEY, RABBITMQ_URL)
 
 
 class RabbitManager:
@@ -18,7 +19,7 @@ class RabbitManager:
         self._passwd = RABBIT_PASSWORD
 
         self._channel = None
-        self._queue = None
+        self._queue: rabbitpy.Queue = None
         self._exchange = None
         self._connection = None
 
@@ -35,15 +36,18 @@ class RabbitManager:
         self._bind_queue(EXCHANGE_NAME, routing_key=ROUTING_KEY)
 
     def _connect(self):
-        self._connection = rabbitpy.Connection(
-            "{scheme}://{username}:{password}@"
-            "{host}:{port}/{virtual_host}".format(
-                scheme='amqp',
-                username=self._user,
-                password=self._passwd,
-                host=self._host,
-                port=self._port,
-                virtual_host=self._vhost))
+        if RABBITMQ_URL:
+            self._connection = rabbitpy.Connection(RABBITMQ_URL)
+        else:
+            self._connection = rabbitpy.Connection(
+                "{scheme}://{username}:{password}@"
+                "{host}:{port}/{virtual_host}".format(
+                    scheme='amqp',
+                    username=self._user,
+                    password=self._passwd,
+                    host=self._host,
+                    port=self._port,
+                    virtual_host=self._vhost))
         self._channel = self._connection.channel()
 
     def _declare_exchange(self, exchange_name, exchange_type='direct',
@@ -89,8 +93,12 @@ class RabbitManager:
         try:
             val = self._queue.get(acknowledge=False)
         except Exception as e0:
-            self._log.debug(e0)
+            self._log.exception(e0)
         return val
+
+    def start_consuming(self, threads):
+        for msg in self._queue.consume(prefetch=threads):
+            yield json.loads(msg.body)
 
     def stop_consuming(self):
         try:
@@ -108,6 +116,9 @@ global_rqueue = RabbitManager()
 if __name__ == '__main__':
     from threading import Thread
 
+    EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY = \
+        'test_exchange', 'test_queue', 'test_rkey'
+
     def reader(rq: RabbitManager):
         for msg in rq.start_consuming(threads=100):
             if msg['value'] % 1000 == 0:
@@ -120,19 +131,11 @@ if __name__ == '__main__':
             message['value'] = i
             if i % 1000 == 0:
                 print('publish: ', i)
-            rq.publish(
-                message, exchange_name, queue_name)
+            rq.publish(message)
 
-    host = 'localhost'
-    port = 5672
-    vhost = '/'
-    user, password = 'guest', 'guest'
-    exchange_name, queue_name = 'test_exchange', 'test_queue'
-    rq_r = RabbitManager(
-        host, port, vhost, user, password, exchange_name, queue_name)
+    rq_r = RabbitManager()
 
-    rq_w = RabbitManager(
-        host, port, vhost, user, password, exchange_name, queue_name)
+    rq_w = RabbitManager()
 
     t1 = Thread(target=writer, args=(rq_w,))
     t2 = Thread(target=reader, args=(rq_r,))

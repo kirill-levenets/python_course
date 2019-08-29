@@ -15,7 +15,7 @@ if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
 
     log_formatter = logging.Formatter(
-        '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} '
+        '[%(asctime)s] p%(process)s {%(filename)s:%(lineno)d} '
         '%(levelname)s - %(message)s'
     )
 

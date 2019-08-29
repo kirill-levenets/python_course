@@ -1,10 +1,14 @@
 
 import os
 from string import ascii_lowercase, digits
+import dotenv
+dotenv.load_dotenv()
 
 # flask app
-RANDOM_STRING = "random string"
+RANDOM_STRING = os.getenv("RANDOM_STRING", "random string")
 APP_NAME = "Suggestions Crawler"
+FLASK_HOST = os.getenv("FLASK_HOST", 'localhost')
+FLASK_PORT = os.getenv("FLSAK_PORT", 5000)
 
 # params for rabbit queue
 RABBIT_HOST = 'localhost'
@@ -17,17 +21,24 @@ QUEUE_NAME = 'sug_queue'
 ROUTING_KEY = 'sug_rkey'
 MAX_ERRORS_COUNT = 5
 
+RABBITMQ_URL = os.environ.get('RABBITMQ_URL')
+
 # params for db (sqlite)
-DB_NAME = os.path.join(os.getcwd(), 'db', 'keywords.sqlite3')
-
-# params for crawler
-
+DB_NAME = os.environ.get(
+    'DATABASE_URL',
+    f'sqlite:///{os.path.join(os.getcwd(), "db", "keywords.sqlite3")}'
+)
 
 # params for proxy
 PROXY_FILE_PATH = os.path.join(os.getcwd(), 'db', 'proxy_list.txt')
+PROXY_OK_TIMEOUT = 10
+PROXY_BN_TIMEOUT = 300
 
 
 # configs for crawler
+NUM_WORKERS = int(os.getenv('NUM_WORKERS', 5))
+USE_PROXY = os.getenv('USE_PROXY', True)
+
 ALPHABETS = ascii_lowercase + digits + "абвгдеёжзийклмнопрстуфхцчшщэюяїъыі"
 MAX_INNER_QUEUE_SIZE = 1
 URL = 'https://duckduckgo.com/ac/?callback=autocompleteCallback&q={query}&kl=wt-wt&_=1565197079862'
